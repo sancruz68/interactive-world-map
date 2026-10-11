@@ -9,6 +9,14 @@ import { HttpClient } from '@angular/common/http';
 import { timeout } from 'rxjs';
 import world from '@svg-maps/world';
 
+// World map country data
+interface MapCountry {
+  id: string;
+  name: string;
+  path: string;
+}
+
+// World Bank API response
 interface WorldBankCountry {
   name: string;
   capitalCity: string;
@@ -40,30 +48,71 @@ export class App {
 
   private requestId = 0;
 
-  readonly worldMap = world;
+  // World map data
+  readonly worldMap = world as {
+    viewBox: string;
+    locations: MapCountry[];
+  };
 
+  // Search
+  searchQuery = '';
+
+  // Selected country
   selectedCountryId = '';
   selectedCountryName = '';
 
+  // Country information
   countryDetails: WorldBankCountry | null = null;
 
+  // Loading and errors
   isLoading = false;
   errorMessage = '';
 
+  // Filter countries based on search input
+  get searchResults(): MapCountry[] {
+
+    const query = this.searchQuery.trim().toLowerCase();
+
+    if (!query) {
+      return [];
+    }
+
+    return this.worldMap.locations
+      .filter((country: MapCountry) =>
+        country.name.toLowerCase().includes(query)
+      )
+      .slice(0, 8);
+  }
+
+  // Update search text
+  onSearchInput(event: Event): void {
+
+    const input = event.target as HTMLInputElement;
+
+    this.searchQuery = input.value;
+  }
+
+  // Select a country from the map or search
   selectCountry(id: string, name: string): void {
 
     this.selectedCountryId = id;
     this.selectedCountryName = name;
 
+    // Clear search after selecting a country
+    this.searchQuery = '';
+
+    // Reset previous country information
     this.countryDetails = null;
     this.errorMessage = '';
     this.isLoading = true;
 
     const currentRequest = ++this.requestId;
 
+    // World Bank API endpoint
     const url =
       `https://api.worldbank.org/v2/country/${encodeURIComponent(id)}?format=json`;
 
+    // Request country information
     this.http
       .get<WorldBankResponse>(url)
       .pipe(timeout(10000))
@@ -71,6 +120,7 @@ export class App {
 
         next: (response) => {
 
+          // Ignore outdated requests
           if (currentRequest !== this.requestId) {
             return;
           }
@@ -82,15 +132,19 @@ export class App {
               : undefined;
 
           if (country) {
+
             this.countryDetails = country;
+
           } else {
+
             this.errorMessage =
               'Country information is not available.';
+
           }
 
           this.isLoading = false;
 
-          // Notify Angular that the information changed
+          // Update Angular interface
           this.cdr.markForCheck();
         },
 
@@ -105,7 +159,7 @@ export class App {
 
           this.isLoading = false;
 
-          // Update the page even when an API request fails
+          // Update Angular interface
           this.cdr.markForCheck();
         }
 

@@ -13,13 +13,43 @@
 
     <section class="map-section">
       <h2>Explore the World</h2>
+      <p>Select a country on the map or search by name.</p>
 
-      <p>
-        Select a country on the map to learn more about it.
-      </p>
+      <!-- Country Search -->
+      <div class="search-section">
+        <label for="country-search">Search Countries</label>
 
+        <input
+          id="country-search"
+          type="search"
+          placeholder="Search for a country..."
+          autocomplete="off"
+          [value]="searchQuery"
+          (input)="onSearchInput($event)"
+        />
+
+        @if (searchQuery.trim()) {
+          <div class="search-results" aria-live="polite">
+
+            @if (searchResults.length > 0) {
+              @for (country of searchResults; track country.id) {
+                <button
+                  type="button"
+                  (click)="selectCountry(country.id, country.name)"
+                >
+                  {{ country.name }}
+                </button>
+              }
+            } @else {
+              <p>No matching countries found.</p>
+            }
+
+          </div>
+        }
+      </div>
+
+      <!-- World Map -->
       <div class="map-container">
-
         <svg
           class="world-map"
           [attr.viewBox]="worldMap.viewBox"
@@ -28,7 +58,6 @@
         >
 
           @for (country of worldMap.locations; track country.id) {
-
             <path
               [attr.d]="country.path"
               [attr.aria-label]="country.name"
@@ -41,18 +70,15 @@
             >
               <title>{{ country.name }}</title>
             </path>
-
           }
 
         </svg>
-
       </div>
     </section>
 
+    <!-- Country Information -->
     <aside class="country-section">
-
       <h2>Country Information</h2>
-
       <p>Select a country to view its details.</p>
 
       <div class="country-details">
@@ -63,11 +89,15 @@
         </p>
 
         @if (isLoading) {
-          <p>Loading country information...</p>
+          <p class="loading-message" role="status">
+            Loading country information...
+          </p>
         }
 
         @if (errorMessage) {
-          <p role="alert">{{ errorMessage }}</p>
+          <p class="error-message" role="alert">
+            {{ errorMessage }}
+          </p>
         }
 
         <p>
@@ -96,7 +126,6 @@
         </p>
 
       </div>
-
     </aside>
 
   </main>

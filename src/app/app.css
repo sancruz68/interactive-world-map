@@ -11,8 +11,6 @@
   box-sizing: border-box;
 }
 
-/* Main Application */
-
 .app-container {
   min-height: 100vh;
 }
@@ -70,7 +68,72 @@
   line-height: 1.6;
 }
 
-/* Map Container */
+/* Country Search */
+
+.search-section {
+  margin-top: 25px;
+  position: relative;
+}
+
+.search-section label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.search-section input {
+  width: 100%;
+  padding: 13px 15px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  background: white;
+}
+
+.search-section input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.search-results {
+  margin-top: 5px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.search-results button {
+  display: block;
+  width: 100%;
+  padding: 12px 15px;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  background: white;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1e293b;
+}
+
+.search-results button:hover,
+.search-results button:focus-visible {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.search-results p {
+  padding: 12px 15px;
+  margin: 0;
+  color: #64748b;
+}
+
+/* World Map */
 
 .map-container {
   display: flex;
@@ -83,8 +146,6 @@
   background-color: #eaf4ff;
   overflow: hidden;
 }
-
-/* Interactive World Map */
 
 .world-map {
   display: block;
@@ -101,32 +162,17 @@
   transition: fill 0.2s ease;
 }
 
-/* Hover Effect */
-
-.world-map path:hover {
-  fill: #2563eb;
-}
-
-/* Keyboard Focus */
-
+.world-map path:hover,
 .world-map path:focus-visible {
   fill: #2563eb;
   outline: none;
-  stroke: #0f172a;
-  stroke-width: 1.5;
 }
-
-/* Selected Country */
 
 .world-map path.selected {
   fill: #0f766e;
 }
 
-.world-map path.selected:hover {
-  fill: #0d9488;
-}
-
-/* Country Information */
+/* Country Details */
 
 .country-details {
   margin-top: 25px;
@@ -148,7 +194,15 @@
   border-bottom: none;
 }
 
-/* Responsive Design */
+.loading-message {
+  color: #2563eb;
+}
+
+.error-message {
+  color: #b91c1c;
+}
+
+/* Responsive Layout */
 
 @media (max-width: 850px) {
   .main-content {
