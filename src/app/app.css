@@ -1,0 +1,191 @@
+
+:host {
+  display: block;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1e293b;
+  background-color: #f1f5f9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Main Application */
+
+.app-container {
+  min-height: 100vh;
+}
+
+/* Header */
+
+.header {
+  background: linear-gradient(135deg, #0f172a, #1e40af);
+  color: white;
+  text-align: center;
+  padding: 55px 20px;
+}
+
+.header h1 {
+  font-size: 38px;
+  margin: 0 0 15px;
+}
+
+.header p {
+  font-size: 16px;
+  color: #cbd5e1;
+  margin: 0;
+}
+
+/* Main Layout */
+
+.main-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 25px;
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 25px 40px;
+}
+
+/* Cards */
+
+.map-section,
+.country-section {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+}
+
+.map-section h2,
+.country-section h2 {
+  color: #0f172a;
+  margin-top: 0;
+}
+
+.map-section > p,
+.country-section > p {
+  color: #64748b;
+  line-height: 1.6;
+}
+
+/* Map Container */
+
+.map-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 25px;
+  min-height: 400px;
+  padding: 12px;
+  border-radius: 10px;
+  background-color: #eaf4ff;
+  overflow: hidden;
+}
+
+/* Interactive World Map */
+
+.world-map {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 550px;
+}
+
+.world-map path {
+  fill: #b8c8d9;
+  stroke: #ffffff;
+  stroke-width: 0.6;
+  cursor: pointer;
+  transition: fill 0.2s ease;
+}
+
+/* Hover Effect */
+
+.world-map path:hover {
+  fill: #2563eb;
+}
+
+/* Keyboard Focus */
+
+.world-map path:focus-visible {
+  fill: #2563eb;
+  outline: none;
+  stroke: #0f172a;
+  stroke-width: 1.5;
+}
+
+/* Selected Country */
+
+.world-map path.selected {
+  fill: #0f766e;
+}
+
+.world-map path.selected:hover {
+  fill: #0d9488;
+}
+
+/* Country Information */
+
+.country-details {
+  margin-top: 25px;
+}
+
+.country-details p {
+  padding: 14px 0;
+  border-bottom: 1px solid #e2e8f0;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.country-details strong {
+  color: #0f172a;
+}
+
+.country-details p:last-child {
+  border-bottom: none;
+}
+
+/* Responsive Design */
+
+@media (max-width: 850px) {
+  .main-content {
+    grid-template-columns: 1fr;
+    margin-top: 20px;
+    padding: 0 15px 30px;
+  }
+
+  .header {
+    padding: 35px 15px;
+  }
+
+  .header h1 {
+    font-size: 30px;
+  }
+
+  .map-section,
+  .country-section {
+    padding: 20px;
+  }
+
+  .map-container {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header h1 {
+    font-size: 26px;
+  }
+
+  .map-container {
+    padding: 5px;
+    min-height: 220px;
+  }
+
+  .country-details p {
+    font-size: 14px;
+  }
+}

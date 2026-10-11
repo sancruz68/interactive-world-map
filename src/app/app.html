@@ -1,0 +1,104 @@
+
+<div class="app-container">
+
+  <header class="header">
+    <h1>World Explorer</h1>
+    <p>
+      Discover countries and explore information
+      from around the world.
+    </p>
+  </header>
+
+  <main class="main-content">
+
+    <section class="map-section">
+      <h2>Explore the World</h2>
+
+      <p>
+        Select a country on the map to learn more about it.
+      </p>
+
+      <div class="map-container">
+
+        <svg
+          class="world-map"
+          [attr.viewBox]="worldMap.viewBox"
+          role="group"
+          aria-label="Interactive world map"
+        >
+
+          @for (country of worldMap.locations; track country.id) {
+
+            <path
+              [attr.d]="country.path"
+              [attr.aria-label]="country.name"
+              [class.selected]="selectedCountryId === country.id"
+              tabindex="0"
+              role="button"
+              (click)="selectCountry(country.id, country.name)"
+              (keydown.enter)="selectCountry(country.id, country.name)"
+              (keydown.space)="selectCountry(country.id, country.name); $event.preventDefault()"
+            >
+              <title>{{ country.name }}</title>
+            </path>
+
+          }
+
+        </svg>
+
+      </div>
+    </section>
+
+    <aside class="country-section">
+
+      <h2>Country Information</h2>
+
+      <p>Select a country to view its details.</p>
+
+      <div class="country-details">
+
+        <p>
+          <strong>Country:</strong>
+          {{ selectedCountryName || '—' }}
+        </p>
+
+        @if (isLoading) {
+          <p>Loading country information...</p>
+        }
+
+        @if (errorMessage) {
+          <p role="alert">{{ errorMessage }}</p>
+        }
+
+        <p>
+          <strong>Capital:</strong>
+          {{ countryDetails?.capitalCity || '—' }}
+        </p>
+
+        <p>
+          <strong>Region:</strong>
+          {{ countryDetails?.region?.value || '—' }}
+        </p>
+
+        <p>
+          <strong>Income Level:</strong>
+          {{ countryDetails?.incomeLevel?.value || '—' }}
+        </p>
+
+        <p>
+          <strong>Latitude:</strong>
+          {{ countryDetails?.latitude || '—' }}
+        </p>
+
+        <p>
+          <strong>Longitude:</strong>
+          {{ countryDetails?.longitude || '—' }}
+        </p>
+
+      </div>
+
+    </aside>
+
+  </main>
+
+</div>
