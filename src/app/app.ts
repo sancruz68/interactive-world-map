@@ -2,21 +2,26 @@
 import {
   Component,
   ChangeDetectorRef,
+  OnInit,
   inject
 } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
 import { timeout } from 'rxjs';
-import world from '@svg-maps/world';
 
-// World map country data
+// Country shapes used by the SVG world map
 interface MapCountry {
   id: string;
   name: string;
   path: string;
 }
 
-// World Bank API response
+interface WorldMapData {
+  viewBox: string;
+  locations: MapCountry[];
+}
+
+// Information returned by the World Bank API
 interface WorldBankCountry {
   name: string;
   capitalCity: string;
@@ -41,18 +46,21 @@ type WorldBankResponse = [
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
+export class App implements OnInit {
 
   private readonly http = inject(HttpClient);
   private readonly cdr = inject(ChangeDetectorRef);
 
   private requestId = 0;
 
-  // World map data
-  readonly worldMap = world as {
-    viewBox: string;
-    locations: MapCountry[];
+  // Map data is loaded separately from the JavaScript bundle
+  worldMap: WorldMapData = {
+    viewBox: '0 0 1000 500',
+    locations: []
   };
+
+  isMapLoading = true;
+  mapErrorMessage = '';
 
   // Search
   searchQuery = '';
@@ -61,14 +69,53 @@ export class App {
   selectedCountryId = '';
   selectedCountryName = '';
 
-  // Country information
+  // World Bank country details
   countryDetails: WorldBankCountry | null = null;
 
-  // Loading and errors
   isLoading = false;
   errorMessage = '';
 
-  // Filter countries based on search input
+  ngOnInit(): void {
+    this.loadWorldMap();
+  }
+
+  // Load map data from the public folder
+  private loadWorldMap(): void {
+
+    this.http
+      .get<WorldMapData>('world-map.json')
+      .pipe(timeout(20000))
+      .subscribe({
+
+        next: (data) => {
+
+          if (
+            data &&
+            typeof data.viewBox === 'string' &&
+            Array.isArray(data.locations)
+          ) {
+            this.worldMap = data;
+          } else {
+            this.mapErrorMessage =
+              'The world map data could not be loaded.';
+          }
+
+          this.isMapLoading = false;
+          this.cdr.markForCheck();
+        },
+
+        error: () => {
+
+          this.mapErrorMessage =
+            'Unable to load the world map. Please refresh the page.';
+
+          this.isMapLoading = false;
+          this.cdr.markForCheck();
+        }
+      });
+  }
+
+  // Find countries matching the search query
   get searchResults(): MapCountry[] {
 
     const query = this.searchQuery.trim().toLowerCase();
@@ -84,11 +131,10 @@ export class App {
       .slice(0, 8);
   }
 
-  // Update search text
+  // Update the search input
   onSearchInput(event: Event): void {
 
     const input = event.target as HTMLInputElement;
-
     this.searchQuery = input.value;
   }
 
@@ -97,22 +143,17 @@ export class App {
 
     this.selectedCountryId = id;
     this.selectedCountryName = name;
-
-    // Clear search after selecting a country
     this.searchQuery = '';
 
-    // Reset previous country information
     this.countryDetails = null;
     this.errorMessage = '';
     this.isLoading = true;
 
     const currentRequest = ++this.requestId;
 
-    // World Bank API endpoint
     const url =
       `https://api.worldbank.org/v2/country/${encodeURIComponent(id)}?format=json`;
 
-    // Request country information
     this.http
       .get<WorldBankResponse>(url)
       .pipe(timeout(10000))
@@ -120,7 +161,7 @@ export class App {
 
         next: (response) => {
 
-          // Ignore outdated requests
+          // Ignore older API responses
           if (currentRequest !== this.requestId) {
             return;
           }
@@ -132,19 +173,13 @@ export class App {
               : undefined;
 
           if (country) {
-
             this.countryDetails = country;
-
           } else {
-
             this.errorMessage =
               'Country information is not available.';
-
           }
 
           this.isLoading = false;
-
-          // Update Angular interface
           this.cdr.markForCheck();
         },
 
@@ -158,11 +193,8 @@ export class App {
             'Unable to load country information. Please try again.';
 
           this.isLoading = false;
-
-          // Update Angular interface
           this.cdr.markForCheck();
         }
-
       });
   }
 }

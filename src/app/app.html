@@ -11,13 +11,18 @@
 
   <main class="main-content">
 
+    <!-- Map Section -->
     <section class="map-section">
+
       <h2>Explore the World</h2>
       <p>Select a country on the map or search by name.</p>
 
       <!-- Country Search -->
       <div class="search-section">
-        <label for="country-search">Search Countries</label>
+
+        <label for="country-search">
+          Search Countries
+        </label>
 
         <input
           id="country-search"
@@ -29,55 +34,83 @@
         />
 
         @if (searchQuery.trim()) {
+
           <div class="search-results" aria-live="polite">
 
             @if (searchResults.length > 0) {
+
               @for (country of searchResults; track country.id) {
+
                 <button
                   type="button"
                   (click)="selectCountry(country.id, country.name)"
                 >
                   {{ country.name }}
                 </button>
+
               }
+
             } @else {
+
               <p>No matching countries found.</p>
+
             }
 
           </div>
         }
+
       </div>
 
       <!-- World Map -->
       <div class="map-container">
-        <svg
-          class="world-map"
-          [attr.viewBox]="worldMap.viewBox"
-          role="group"
-          aria-label="Interactive world map"
-        >
 
-          @for (country of worldMap.locations; track country.id) {
-            <path
-              [attr.d]="country.path"
-              [attr.aria-label]="country.name"
-              [class.selected]="selectedCountryId === country.id"
-              tabindex="0"
-              role="button"
-              (click)="selectCountry(country.id, country.name)"
-              (keydown.enter)="selectCountry(country.id, country.name)"
-              (keydown.space)="selectCountry(country.id, country.name); $event.preventDefault()"
-            >
-              <title>{{ country.name }}</title>
-            </path>
-          }
+        @if (isMapLoading) {
 
-        </svg>
+          <p role="status">Loading world map...</p>
+
+        } @else if (mapErrorMessage) {
+
+          <p class="error-message" role="alert">
+            {{ mapErrorMessage }}
+          </p>
+
+        } @else {
+
+          <svg
+            class="world-map"
+            [attr.viewBox]="worldMap.viewBox"
+            role="group"
+            aria-label="Interactive world map"
+          >
+
+            @for (country of worldMap.locations; track country.id) {
+
+              <path
+                [attr.d]="country.path"
+                [attr.aria-label]="country.name"
+                [class.selected]="selectedCountryId === country.id"
+                tabindex="0"
+                role="button"
+                (click)="selectCountry(country.id, country.name)"
+                (keydown.enter)="selectCountry(country.id, country.name)"
+                (keydown.space)="selectCountry(country.id, country.name); $event.preventDefault()"
+              >
+                <title>{{ country.name }}</title>
+              </path>
+
+            }
+
+          </svg>
+
+        }
+
       </div>
+
     </section>
 
     <!-- Country Information -->
     <aside class="country-section">
+
       <h2>Country Information</h2>
       <p>Select a country to view its details.</p>
 
@@ -126,6 +159,7 @@
         </p>
 
       </div>
+
     </aside>
 
   </main>
